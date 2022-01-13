@@ -1,0 +1,56 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.memes-masonry {
+  display: flex;
+  justify-content: center;
+  margin-left: -30px;
+  margin-bottom: 2rem;
+	width: auto;
+}
+
+.customerImgWrapper {
+  display: flex;
+  max-width: 40rem;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-evenly;
+  margin-bottom: 6rem;
+}
+
+.img-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.btn-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 2rem;
+  margin: 0 auto;
+}
+
+.memes-masonry-column {
+  padding-left: 30px;
+  background-clip: padding-box;
+}
+
+.btn {
+  margin-bottom: 1rem;
+}
+
+.added {
+  background: rgba(54, 222, 68, 0.6);
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-evenly;
+}
