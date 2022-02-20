@@ -1,4 +1,4 @@
-import React, {useContext, useState } from 'react'
+import React, {useContext, useState, useRef } from 'react'
 import { doc, arrayUnion, updateDoc } from "firebase/firestore"
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage"
 import { fireStore, storage } from "../firebase"
@@ -8,8 +8,9 @@ import { Form, Button, Card } from "react-bootstrap"
 
 const UploadImg = () => {
     const { user  } = useContext(AuthContext)
-    const [img, setImg] = useState(null)
     const { id } = useParams()
+    const inputRef = useRef()
+    const [img, setImg] = useState(null)
     const [submit, setSubmit] = useState(false)
 
     const onFileChange = (e) => {
@@ -53,6 +54,7 @@ const UploadImg = () => {
                 })
             })
             setSubmit(false)
+            inputRef.current.value = ""
 
         } catch (e) {
             alert("error!")
@@ -69,7 +71,7 @@ const UploadImg = () => {
                 <Form onSubmit={onSubmit}>
                     <Form.Group className="mb-3">
                         <Form.Label>Image</Form.Label>
-                        <Form.Control type="file" onChange={onFileChange} required/>
+                        <Form.Control type="file" onChange={onFileChange} ref={inputRef} required/>
                         <Button disabled={submit} variant="primary" type="submit">Upload Image</Button>
                     </Form.Group>
                 </Form>
