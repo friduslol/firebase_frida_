@@ -27,40 +27,29 @@ const CustomerPage = () => {
     const [customerArr, setCustomerArr] = useState([])
     const [removedArr, setRemovedArr] = useState([])
     const [submit, setSubmit] = useState(false)
+
     useEffect(() => {
         if(album) {
             if(album.images.length) {
-            setImgArr(album.images)
+                setImgArr(album.images)
             }
         }
     },[album])
 
-    useEffect(() => {
-        console.log("customerArr", customerArr)
-    },[customerArr])
-
-    useEffect(() => {
-       console.log("removedArr", removedArr)
-    },[removedArr])
-
     const addImg = (image, index) => {
-
        if(customerArr.includes(image)) {
             return
        } else if (removedArr.includes(image)) {
-
             setRemovedArr(
                 removedArr.filter((prevImage) => prevImage.storageRef !== image.storageRef)
             )
             setCustomerArr((prevState) => [image, ...prevState])
             myRefs.current[index].classList.remove("remove");
             myRefs.current[index].classList.add("add")
-
         } else {
             setCustomerArr((prevState) => [image, ...prevState])
             myRefs.current[index].classList.add("add")
-       }
-
+        }
     }
 
     const removeImg = (image, index) => {
@@ -121,7 +110,7 @@ const CustomerPage = () => {
                 </Card>
                 ))}
             </Masonry >
-            <p> {customerArr.length} / {imgArr.length} images choosen!</p>
+            <p> {customerArr.length} / {imgArr.length} images chosen!</p>
             <div className="btn-wrapper">
                 <Button className="btn" disabled={submit} onClick={onCreateCopy}>Submit album</Button>
             </div>
