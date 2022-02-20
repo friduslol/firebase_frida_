@@ -4,7 +4,7 @@ import { updateDoc, doc } from "firebase/firestore"
 import { fireStore } from "../firebase"
 import { Form, Button, Card } from "react-bootstrap"
 
-const ChangeAlbumName = () => {
+const ChangeAlbumName = ({ album }) => {
     const { id } = useParams()
     const inputTitleChange = useRef()
     const [submit, setSubmit] = useState(false)
@@ -39,7 +39,12 @@ const ChangeAlbumName = () => {
                 <Form onSubmit={onSubmit}>
                     <Form.Group className="mb-3">
                         <Form.Label>Title</Form.Label>
-                        <Form.Control type="text" ref={inputTitleChange} required/>
+                        <Form.Control
+                            type="text"
+                            ref={inputTitleChange}
+                            defaultValue={album ? album.title : ""}
+                            required
+                        />
                         <Button disabled={submit} variant="primary" type="submit">Update title</Button>
                     </Form.Group>
                 </Form>

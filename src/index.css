@@ -46,11 +46,16 @@
   margin-bottom: 1rem;
 }
 
-.added {
-  background: rgba(54, 222, 68, 0.6);
-}
 
 .card-footer {
   display: flex;
   justify-content: space-evenly;
+}
+
+.add {
+  border: 4px solid green;
+}
+
+.remove {
+  border: 4px solid red;
 }

@@ -28,7 +28,6 @@ const AuthContextProvider = (props) => {
         onAuthStateChanged(auth, (user) => {
             setUser(user)
             setConfirm(false)
-            console.log("user:", user)
         })
         // eslint-disable-next-line
     }, [])

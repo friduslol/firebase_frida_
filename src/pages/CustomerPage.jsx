@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from "react-router-dom"
 import useGetAlbum from "../hooks/useGetAlbum"
 import { addDoc, collection } from 'firebase/firestore'
@@ -22,41 +22,57 @@ const CustomerPage = () => {
     const { id } = useParams()
     const { userId } = useParams()
     const { loading, data: album } = useGetAlbum(id)
+    const cardRefs= useRef([]);
     const [imgArr, setImgArr] = useState([])
     const [customerArr, setCustomerArr] = useState([])
     const [removedArr, setRemovedArr] = useState([])
-    const [count, setCount] = useState(0)
     const [submit, setSubmit] = useState(false)
 
     useEffect(() => {
         if(album) {
             if(album.images.length) {
-            setImgArr(album.images)
+                setImgArr(album.images)
             }
         }
     },[album])
 
-    const addImg = (image) => {
-       if(customerArr.includes(image) || removedArr.includes(image)) {
+    const addImg = (image, index) => {
+       if(customerArr.includes(image)) {
             return
-       } else {
-        setCustomerArr((prevState) => [image, ...prevState])
-        setCount((prevState) => prevState += 1)
-       }
-
+       } else if (removedArr.includes(image)) {
+            setRemovedArr(
+                removedArr.filter((prevImage) => prevImage.storageRef !== image.storageRef)
+            )
+            setCustomerArr((prevState) => [image, ...prevState])
+            cardRefs.current[index].classList.remove("remove");
+            cardRefs.current[index].classList.add("add")
+        } else {
+            setCustomerArr((prevState) => [image, ...prevState])
+            cardRefs.current[index].classList.add("add")
+        }
     }
 
-    const removeImg = (image) => {
-        if(customerArr.includes(image) || removedArr.includes(image)) {
+    const removeImg = (image, index) => {
+        if(removedArr.includes(image)) {
             return
-        } else {
+        } else if (customerArr.includes(image)) {
+            setCustomerArr(
+                customerArr.filter((prevImage) => prevImage.storageRef !== image.storageRef)
+            )
             setRemovedArr((prevState) => [image, ...prevState])
-            setCount((prevState) => prevState += 1)
+            cardRefs.current[index].classList.remove("add");
+            cardRefs.current[index].classList.add("remove")
+        }
+        else {
+            setRemovedArr((prevState) => [image, ...prevState])
+            cardRefs.current[index].classList.add("remove");
         }
     }
 
     const onCreateCopy = async () => {
+        let count = removedArr.length + customerArr.length
         if(count !== imgArr.length) {
+            alert(`You have only made a decision on ${count} / ${imgArr.length} images, please resume!`)
             return
         }
 
@@ -71,12 +87,6 @@ const CustomerPage = () => {
         navigate("/msgPage")
     }
 
-    const onReset = () => {
-        setCustomerArr([])
-        setRemovedArr([])
-        setCount(0)
-    }
-
     return (
         <SRLWrapper>
             {loading && <>...</>}
@@ -87,33 +97,21 @@ const CustomerPage = () => {
             >
                 {!imgArr && <p>No Images!</p>}
                 {imgArr && imgArr.map((image, index)=> (
-                <Card className="card" key={index}>
+                <Card className="card" key={index} ref={(el) => (cardRefs.current[index] = el)}>
                     <a href={image.url}>
                         <Card.Img variant="top" src={image.url} title={image._id} />
                     </a>
                     <Card.Footer className="card-footer">
-                        <FontAwesomeIcon icon={faThumbsDown} onClick={() => addImg(image)} role="button"/>
-                        <FontAwesomeIcon icon={faThumbsUp} onClick={() => removeImg(image)} role="button"/>
+                        <FontAwesomeIcon icon={faThumbsDown} onClick={() => removeImg(image, index)}
+                        role="button"/>
+                        <FontAwesomeIcon icon={faThumbsUp} onClick={() => addImg(image, index)}
+                        role="button"/>
                     </Card.Footer>
                 </Card>
                 ))}
             </Masonry >
-            <div className="mx-auto customerImgWrapper">
-                <div className="img-wrapper">
-                    <p>{count} / {imgArr.length} Chosen images:</p>
-                    {customerArr.map((image, index) => (
-                        <img style={{ "maxWidth": '5rem' }} key={index} src={image.url} alt="chosen" />
-                    ))}
-                </div>
-                <div className="img-wrapper">
-                    <p>Removed images:</p>
-                    {removedArr.map((image, index) => (
-                        <img style={{ "maxWidth": '5rem' }} key={index} src={image.url} alt="removed" />
-                    ))}
-                </div>
-            </div>
+            <p> {customerArr.length} / {imgArr.length} images chosen!</p>
             <div className="btn-wrapper">
-                <Button className="btn" onClick={onReset}>Start over!</Button>
                 <Button className="btn" disabled={submit} onClick={onCreateCopy}>Submit album</Button>
             </div>
         </SRLWrapper>
