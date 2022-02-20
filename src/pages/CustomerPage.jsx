@@ -22,45 +22,34 @@ const CustomerPage = () => {
     const { id } = useParams()
     const { userId } = useParams()
     const { loading, data: album } = useGetAlbum(id)
-    const myRefs= useRef([]);
+    const cardRefs= useRef([]);
     const [imgArr, setImgArr] = useState([])
     const [customerArr, setCustomerArr] = useState([])
     const [removedArr, setRemovedArr] = useState([])
     const [submit, setSubmit] = useState(false)
+
     useEffect(() => {
         if(album) {
             if(album.images.length) {
-            setImgArr(album.images)
+                setImgArr(album.images)
             }
         }
     },[album])
 
-    useEffect(() => {
-        console.log("customerArr", customerArr)
-    },[customerArr])
-
-    useEffect(() => {
-       console.log("removedArr", removedArr)
-    },[removedArr])
-
     const addImg = (image, index) => {
-
        if(customerArr.includes(image)) {
             return
        } else if (removedArr.includes(image)) {
-
             setRemovedArr(
                 removedArr.filter((prevImage) => prevImage.storageRef !== image.storageRef)
             )
             setCustomerArr((prevState) => [image, ...prevState])
-            myRefs.current[index].classList.remove("remove");
-            myRefs.current[index].classList.add("add")
-
+            cardRefs.current[index].classList.remove("remove");
+            cardRefs.current[index].classList.add("add")
         } else {
             setCustomerArr((prevState) => [image, ...prevState])
-            myRefs.current[index].classList.add("add")
-       }
-
+            cardRefs.current[index].classList.add("add")
+        }
     }
 
     const removeImg = (image, index) => {
@@ -71,12 +60,12 @@ const CustomerPage = () => {
                 customerArr.filter((prevImage) => prevImage.storageRef !== image.storageRef)
             )
             setRemovedArr((prevState) => [image, ...prevState])
-            myRefs.current[index].classList.remove("add");
-            myRefs.current[index].classList.add("remove")
+            cardRefs.current[index].classList.remove("add");
+            cardRefs.current[index].classList.add("remove")
         }
         else {
             setRemovedArr((prevState) => [image, ...prevState])
-            myRefs.current[index].classList.add("remove");
+            cardRefs.current[index].classList.add("remove");
         }
     }
 
@@ -108,7 +97,7 @@ const CustomerPage = () => {
             >
                 {!imgArr && <p>No Images!</p>}
                 {imgArr && imgArr.map((image, index)=> (
-                <Card className="card" key={index} ref={(el) => (myRefs.current[index] = el)}>
+                <Card className="card" key={index} ref={(el) => (cardRefs.current[index] = el)}>
                     <a href={image.url}>
                         <Card.Img variant="top" src={image.url} title={image._id} />
                     </a>
@@ -121,7 +110,7 @@ const CustomerPage = () => {
                 </Card>
                 ))}
             </Masonry >
-            <p> {customerArr.length} / {imgArr.length} images choosen!</p>
+            <p> {customerArr.length} / {imgArr.length} images chosen!</p>
             <div className="btn-wrapper">
                 <Button className="btn" disabled={submit} onClick={onCreateCopy}>Submit album</Button>
             </div>
