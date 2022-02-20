@@ -120,7 +120,7 @@ const Album = () => {
                 </Card.Body>
             </Card>
             <UploadImg />
-            <ChangeAlbumName />
+            <ChangeAlbumName album={album} />
         </SRLWrapper>
     )
 }

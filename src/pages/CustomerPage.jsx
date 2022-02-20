@@ -22,7 +22,7 @@ const CustomerPage = () => {
     const { id } = useParams()
     const { userId } = useParams()
     const { loading, data: album } = useGetAlbum(id)
-    const myRefs= useRef([]);
+    const cardRefs= useRef([]);
     const [imgArr, setImgArr] = useState([])
     const [customerArr, setCustomerArr] = useState([])
     const [removedArr, setRemovedArr] = useState([])
@@ -44,11 +44,11 @@ const CustomerPage = () => {
                 removedArr.filter((prevImage) => prevImage.storageRef !== image.storageRef)
             )
             setCustomerArr((prevState) => [image, ...prevState])
-            myRefs.current[index].classList.remove("remove");
-            myRefs.current[index].classList.add("add")
+            cardRefs.current[index].classList.remove("remove");
+            cardRefs.current[index].classList.add("add")
         } else {
             setCustomerArr((prevState) => [image, ...prevState])
-            myRefs.current[index].classList.add("add")
+            cardRefs.current[index].classList.add("add")
         }
     }
 
@@ -60,12 +60,12 @@ const CustomerPage = () => {
                 customerArr.filter((prevImage) => prevImage.storageRef !== image.storageRef)
             )
             setRemovedArr((prevState) => [image, ...prevState])
-            myRefs.current[index].classList.remove("add");
-            myRefs.current[index].classList.add("remove")
+            cardRefs.current[index].classList.remove("add");
+            cardRefs.current[index].classList.add("remove")
         }
         else {
             setRemovedArr((prevState) => [image, ...prevState])
-            myRefs.current[index].classList.add("remove");
+            cardRefs.current[index].classList.add("remove");
         }
     }
 
@@ -97,7 +97,7 @@ const CustomerPage = () => {
             >
                 {!imgArr && <p>No Images!</p>}
                 {imgArr && imgArr.map((image, index)=> (
-                <Card className="card" key={index} ref={(el) => (myRefs.current[index] = el)}>
+                <Card className="card" key={index} ref={(el) => (cardRefs.current[index] = el)}>
                     <a href={image.url}>
                         <Card.Img variant="top" src={image.url} title={image._id} />
                     </a>
