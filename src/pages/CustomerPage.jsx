@@ -26,7 +26,6 @@ const CustomerPage = () => {
     const [imgArr, setImgArr] = useState([])
     const [customerArr, setCustomerArr] = useState([])
     const [removedArr, setRemovedArr] = useState([])
-    const [count, setCount] = useState(0)
     const [submit, setSubmit] = useState(false)
     useEffect(() => {
         if(album) {
@@ -45,28 +44,46 @@ const CustomerPage = () => {
     },[removedArr])
 
     const addImg = (image, index) => {
-       if(customerArr.includes(image) || removedArr.includes(image)) {
+
+       if(customerArr.includes(image)) {
             return
-       } else {
-        setCustomerArr((prevState) => [image, ...prevState])
-        setCount((prevState) => prevState += 1)
-        myRefs.current[index].classList.add("add")
+       } else if (removedArr.includes(image)) {
+
+            setRemovedArr(
+                removedArr.filter((prevImage) => prevImage.storageRef !== image.storageRef)
+            )
+            setCustomerArr((prevState) => [image, ...prevState])
+            myRefs.current[index].classList.remove("remove");
+            myRefs.current[index].classList.add("add")
+
+        } else {
+            setCustomerArr((prevState) => [image, ...prevState])
+            myRefs.current[index].classList.add("add")
        }
 
     }
 
     const removeImg = (image, index) => {
-        if(customerArr.includes(image) || removedArr.includes(image)) {
+        if(removedArr.includes(image)) {
             return
-        } else {
+        } else if (customerArr.includes(image)) {
+            setCustomerArr(
+                customerArr.filter((prevImage) => prevImage.storageRef !== image.storageRef)
+            )
             setRemovedArr((prevState) => [image, ...prevState])
-            setCount((prevState) => prevState += 1)
+            myRefs.current[index].classList.remove("add");
+            myRefs.current[index].classList.add("remove")
+        }
+        else {
+            setRemovedArr((prevState) => [image, ...prevState])
             myRefs.current[index].classList.add("remove");
         }
     }
 
     const onCreateCopy = async () => {
+        let count = removedArr.length + customerArr.length
         if(count !== imgArr.length) {
+            alert(`You have only made a decision on ${count} / ${imgArr.length} images, please resume!`)
             return
         }
 
@@ -79,12 +96,6 @@ const CustomerPage = () => {
         setCustomerArr([])
         setSubmit(false)
         navigate("/msgPage")
-    }
-
-    const onReset = () => {
-        setCustomerArr([])
-        setRemovedArr([])
-        setCount(0)
     }
 
     return (
@@ -110,8 +121,8 @@ const CustomerPage = () => {
                 </Card>
                 ))}
             </Masonry >
+            <p> {customerArr.length} / {imgArr.length} images choosen!</p>
             <div className="btn-wrapper">
-                <Button className="btn" onClick={onReset}>Start over!</Button>
                 <Button className="btn" disabled={submit} onClick={onCreateCopy}>Submit album</Button>
             </div>
         </SRLWrapper>
